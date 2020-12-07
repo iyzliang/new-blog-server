@@ -1,15 +1,17 @@
-const { getServerTime } = require('./dayGet')
-const { resolveSuccessData, resolveErrorData, resolveSystemError } = require('./resolveData')
+const { getServerTime, getExpTime } = require('./dayGet')
+const { resolveSuccessData, resolveErrorData } = require('./resolveData')
 const { getIPAddress } = require('./getIPAddress')
 const accessLogStream = require('./accessLogStream')
-const checkObjKey = require('./checkObjKey')
+const { md5hex, getAccessToken, getRefreshToken } = require('./common')
 
 module.exports = {
   getServerTime,
   resolveSuccessData,
   resolveErrorData,
-  resolveSystemError,
   getIPAddress,
-  checkObjKey,
-  accessLogStream
+  accessLogStream,
+  md5hex,
+  getAccessToken,
+  getRefreshToken,
+  getExpTime
 }

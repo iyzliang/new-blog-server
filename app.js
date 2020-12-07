@@ -27,30 +27,22 @@ app.use('/api', expressJwt({
   path: jwtUnlessPath
 }))
 
-app.use((error, req, res, next) => {
-  if (error.name === 'UnauthorizedError') {
-    let msg = ''
-    switch (error.message) {
-      case 'jwt expired':
-        msg = 'token信息已过期'
-        break;
-      case 'invalid signature':
-        msg = 'token信息无效'
-        break;
-      default:
-        msg = 'token信息错误'
-        break;
-    }
-    resolveErrorData(res, msg, 401)
-  } else {
-    next()
-  }
-})
 
 app.use('/api/common', common)
 
+app.use((req, res, next) => {
+  resolveErrorData(res, '请求资源不存在', 404)
+})
+
 app.use((error, req, res, next) => {
-  resolveErrorData(res, '未找到请求资源', 404)
+  if (error.name === 'UnauthorizedError') {
+    resolveErrorData(res, '会话超时，请重新登录', error.status || 401)
+  } else if (error.name === 'YZLAppError') {
+    resolveErrorData(res, error.message, error.status || 400)
+  } else {
+    console.log(error)
+    resolveErrorData(res, '服务器内部错误', 500)
+  }
 })
 
 app.listen(3001, () => {

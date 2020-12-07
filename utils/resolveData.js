@@ -17,17 +17,7 @@ const resolveErrorData = (res, dataMsg = 'error', dataCode = 400) => {
   })
 }
 
-const resolveSystemError = res => {
-  res.status(500).send({
-    code: 500,
-    message: '服务器内部错误',
-    serverTime: getServerTime(),
-    data: {}
-  })
-}
-
 module.exports = {
   resolveSuccessData,
-  resolveErrorData,
-  resolveSystemError
+  resolveErrorData
 }
