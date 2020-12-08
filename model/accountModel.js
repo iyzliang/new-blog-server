@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const db = require('./db')
 const idsModel = require('./idsModel')
 const { ThrowError, ErrorCode } = require('../utils/throwError.js')
+const { decodedToken, isExpired } = require('../utils')
 
 const AccountScheam = new mongoose.Schema({
   username: { type: String, default: '' },
@@ -42,6 +43,19 @@ AccountScheam.statics.find_by_username = async function (username) {
       return accountItem
     } else {
       throw new ThrowError(ErrorCode.param, { message: '用户不存在', status: 400 })
+    }
+  } catch (error) {
+    throw error
+  }
+}
+AccountScheam.statics.check_refresh_token = async function (refresh) {
+  try {
+    const tokenJson = decodedToken(refresh)
+    const { refreshToken, userId } = await this.findOne({ userId: tokenJson.userId }).exec()
+    if (refreshToken.token && !isExpired(refreshToken.expiresIn)) {
+      return userId
+    } else {
+      throw new ThrowError(ErrorCode.bad, { message: '刷新凭证已过期', status: 401 })
     }
   } catch (error) {
     throw error

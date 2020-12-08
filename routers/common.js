@@ -62,4 +62,23 @@ router.route('/v1/login').post(async (req, res, next) => {
   }
 })
 
+router.route('/v1/refresh-token').post(async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body
+    if (!refreshToken) throw new ThrowError(ErrorCode.param, { message: '必要参数缺失', status: 400 })
+    const userId = await accountModel.check_refresh_token(refreshToken)
+    const accessExp = getExpTime(60 * 60)
+    const accessToken = getAccessToken({
+      userId,
+      exp: accessExp
+    })
+    resolveSuccessData(res, {
+      accessToken,
+      expiresIn: accessExp
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
 module.exports = router

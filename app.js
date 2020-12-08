@@ -6,7 +6,7 @@ const cors = require('cors')
 const routers = require('./routers')
 const { secretOrPrivateKey, jwtUnlessPath } = require('./config')
 const { resolveErrorData, getServerTime, getIPAddress, accessLogStream } = require('./utils')
-const { common } = require('./routers/index')
+const { common, blog } = require('./routers/index')
 const app = express()
 
 morgan.token('localDate',function getDate(req) {
@@ -29,6 +29,7 @@ app.use('/api', expressJwt({
 
 
 app.use('/api/common', common)
+app.use('/api/blog', blog)
 
 app.use((req, res, next) => {
   resolveErrorData(res, '请求资源不存在', 404)

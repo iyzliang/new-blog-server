@@ -1,8 +1,8 @@
-const { getServerTime, getExpTime } = require('./dayGet')
+const { getServerTime, getExpTime, isExpired } = require('./dayGet')
 const { resolveSuccessData, resolveErrorData } = require('./resolveData')
 const { getIPAddress } = require('./getIPAddress')
 const accessLogStream = require('./accessLogStream')
-const { md5hex, getAccessToken, getRefreshToken } = require('./common')
+const { md5hex, getAccessToken, getRefreshToken, decodedToken } = require('./common')
 
 module.exports = {
   getServerTime,
@@ -13,5 +13,7 @@ module.exports = {
   md5hex,
   getAccessToken,
   getRefreshToken,
-  getExpTime
+  decodedToken,
+  getExpTime,
+  isExpired
 }

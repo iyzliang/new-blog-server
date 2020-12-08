@@ -16,8 +16,13 @@ function getRefreshToken(info = {}) {
   return jwt.sign(info, refreshKey)
 }
 
+function decodedToken (token) {
+  return jwt.decode(token)
+}
+
 module.exports = {
   md5hex,
   getAccessToken,
-  getRefreshToken
+  getRefreshToken,
+  decodedToken
 }
