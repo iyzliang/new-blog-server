@@ -46,7 +46,7 @@ router.route('/v1/tag/:tagId').put(async (req, res, next) => {
     const { tagId } = req.params
     const { tagName } = req.body
     checkTagName(tagName)
-    const dbItem = await tagModel.findOneAndUpdate({tagId}, { tagName }, { new: true }).exec()
+    const dbItem = await tagModel.check_and_update(tagId, tagName)
     resolveSuccessData(res, {
       tagId: dbItem.tagId,
       tagName: dbItem.tagName,

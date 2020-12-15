@@ -33,6 +33,20 @@ TagsScheam.statics.check_and_save = async function (tagName) {
   }
 }
 
+TagsScheam.statics.check_and_update = async function (tagId, tagName) {
+  try {
+    const tagItem = await this.findOne({ tagName }).exec()
+    if (tagItem) {
+      throw new ThrowError(ErrorCode.param, { message: '标签已存在', status: 400 })
+    } else {
+      const dbItem = await this.findOneAndUpdate({tagId}, { tagName }, { new: true }).exec()
+      return dbItem
+    }
+  } catch (error) {
+    throw error
+  }
+}
+
 const TagsModel = db.model('Tag', TagsScheam)
 
 module.exports = TagsModel
