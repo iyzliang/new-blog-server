@@ -11,7 +11,7 @@ const TagsScheam = new mongoose.Schema({
   status: { type: Boolean, default: true }
 })
 
-TagsScheam.path('tagName').required(true, '标签名不能为空不能为空')
+TagsScheam.path('tagName').required(true, '标签名不能为空')
 TagsScheam.path('tagId').required(true, '便签ID不能为空')
 
 TagsScheam.statics.check_and_save = async function (tagName) {
