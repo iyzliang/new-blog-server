@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const formidable = require('formidable')
 const path = require('path')
+const fs = require('fs').promises
 const { resolveSuccessData, getServerTime } = require('../utils')
 const { ThrowError, ErrorCode } = require('../utils/throwError')
 const { uploadPath, uploadUrl } = require('../config')
@@ -18,6 +19,7 @@ router.route('/v1/image').post(async (req, res, next) => {
       if (!fileItem) throw new ThrowError(ErrorCode.param, { message: '上传内容为空', status: 400 })
       const newFileName = new mongoID()
       const extname = path.extname(fileItem.name)
+      await fs.rename(fileItem.path, `${uploadPath}/${newFileName}${extname}`)
       const newItem = await (new imageModel({
         imageName: newFileName,
         imagePath: fileItem.path,
@@ -36,6 +38,16 @@ router.route('/v1/image').get(async (req, res, next) => {
     const { page = 1, size = 10, name = '' } = req.query
     const resData = await imageModel.get_pagination_image(page, size, name)
     resolveSuccessData(res, resData)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.route('/v1/image').delete(async (req, res, next) => {
+  try {
+    const { name } = req.body
+    const itme = await imageModel.updateOne({ imageName: name }, { status: false })
+    resolveSuccessData(res)
   } catch (error) {
     next(error)
   }

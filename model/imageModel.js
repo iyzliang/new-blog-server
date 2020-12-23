@@ -16,11 +16,11 @@ ImagesScheam.path('imageUrl').required(true, '图片地址不能为空')
 
 ImagesScheam.statics.get_pagination_image = async function (page, size, name) {
   const query = {
-    imageName: { $regex: (new RegExp(name, 'i')) }
+    imageName: { $regex: (new RegExp(name, 'i')) },
+    status: true
   }
   const total = await this.countDocuments(query).exec()
   const dbData = await this.find(query).skip((page - 1) * 10).limit(size).exec()
-  console.log(dbData)
   const resList = dbData.map(item => {
     return {
       name: item.imageName,
