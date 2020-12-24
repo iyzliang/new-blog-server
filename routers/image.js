@@ -7,6 +7,7 @@ const { ThrowError, ErrorCode } = require('../utils/throwError')
 const { uploadPath, uploadUrl } = require('../config')
 const imageModel = require('../model/imageModel')
 const mongoID = require('mongodb').ObjectID
+const { isFinite } = require('lodash')
 
 router.route('/v1/image').post(async (req, res, next) => {
   const form = new formidable.IncomingForm()
@@ -35,7 +36,9 @@ router.route('/v1/image').post(async (req, res, next) => {
 
 router.route('/v1/image').get(async (req, res, next) => {
   try {
-    const { page = 1, size = 10, name = '' } = req.query
+    let { page, size, name } = req.query
+    page = (isFinite(parseInt(page)) && parseInt(page) > 0) ? parseInt(page) : 1
+    size = (isFinite(parseInt(size)) && parseInt(size) > 0) ? parseInt(size) : 10
     const resData = await imageModel.get_pagination_image(page, size, name)
     resolveSuccessData(res, resData)
   } catch (error) {

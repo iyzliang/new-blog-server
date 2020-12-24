@@ -4,6 +4,12 @@ const idsModel = require('./idsModel')
 const { ThrowError, ErrorCode } = require('../utils/throwError.js')
 const { getServerTime } = require('../utils/index')
 
+/**
+ * @param tagId 标签id
+ * @param tagName 标签名称
+ * @param createTime 创建时间
+ * @param status 状态
+ */
 const TagsScheam = new mongoose.Schema({
   tagId: { type: Number },
   tagName: { type: String, default: '' },
