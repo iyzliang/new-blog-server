@@ -3,6 +3,7 @@ const { ThrowError, ErrorCode }  = require('../utils/throwError')
 const { resolveSuccessData, getServerTime } = require('../utils')
 const articleModel = require('../model/articleModel')
 const idsModel = require('../model/idsModel')
+const tagModel = require('../model/tagModel')
 
 router.route('/v1/article').post(async (req, res, next) => {
   try {
@@ -21,6 +22,20 @@ router.route('/v1/article').post(async (req, res, next) => {
       createTime: getServerTime(),
       updateTime: getServerTime(),
       userId
+    }
+    if (options.tags.length) {
+      const orQuery = options.tags.map(item => {
+        return {
+          tagId: item
+        }
+      })
+      const dbTag = await tagModel.find({ $or: orQuery })
+      options.tags = dbTag.map(item => {
+        return {
+          id: item.tagId,
+          name: item.tagName
+        }
+      })
     }
     const newItem = await (new articleModel(options)).save()
     resolveSuccessData(res, {
