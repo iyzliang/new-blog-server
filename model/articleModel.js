@@ -30,7 +30,6 @@ const articleScheam = new mongoose.Schema({
 
 articleScheam.path('articleId').required(true, '文章ID不能为空')
 articleScheam.path('title').required(true, '文章标题不能为空')
-articleScheam.path('article').required(true, '文章内容不能为空')
 articleScheam.path('userId').required(true, '用户ID不能为空')
 
 articleScheam.statics = {
@@ -42,13 +41,13 @@ articleScheam.statics = {
       title: { $regex: (new RegExp(title, 'i')) },
       description: { $regex: (new RegExp(description, 'i')) }
     }
-    tagId && (query.tags = { $elemMatch: { tagId } })
+    tagId && (query.tags = { $elemMatch: { id: parseInt(tagId) } })
     const total = await this.countDocuments(query).exec()
     const dbData =  await this.find(query).limit(size).skip(size * (page - 1)).exec()
     const list = dbData.map(item => {
       return {
         id: item.articleId,
-        title: item.articleId,
+        title: item.title,
         description: item.description,
         tags: item.tags,
         cover: item.cover,
