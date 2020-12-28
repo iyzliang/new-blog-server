@@ -111,4 +111,34 @@ router.route('/v1/article/:articleId').put(async (req, res, next) => {
     next(error)
   }
 })
+router.route('/v1/article/:articleId').get(async (req, res, next) => {
+  try {
+    const { articleId } = req.params
+    if (!articleId) throw new ThrowError(ErrorCode.param, { message: '文章ID不能为空', status: 400 })
+    const newItem = await articleModel.findOne({ articleId }).exec()
+    if (!newItem) throw new ThrowError(ErrorCode.param, { message: '文章ID不存在', status: 400 })
+    resolveSuccessData(res, {
+      id: newItem.articleId,
+      title: newItem.title,
+      description: newItem.description,
+      tags: newItem.tags,
+      cover: newItem.cover,
+      article: newItem.article,
+      createTime: newItem.createTime,
+      updateTime: newItem.updateTime
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+router.route('/v1/article/:articleId').delete(async (req, res, next) => {
+  try {
+    const { articleId } = req.params
+    if (!articleId) throw new ThrowError(ErrorCode.param, { message: '文章ID不能为空', status: 400 })
+    await articleModel.findOneAndDelete({ articleId }).exec()
+    resolveSuccessData(res)
+  } catch (error) {
+    next(error)
+  }
+})
 module.exports = router
