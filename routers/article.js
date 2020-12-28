@@ -9,13 +9,12 @@ router.route('/v1/article').post(async (req, res, next) => {
   try {
     const { title, description, tags, cover, article } = req.body
     const userId = req.user.userId
-    if (!article) throw new ThrowError(ErrorCode.param, { message: '文章内容不能为空', status: 400 })
     if (!title) throw new ThrowError(ErrorCode.param, { message: '文章标题不能为空', status: 400 })
     const articleId = await idsModel.get_id_by_model('articleId')
     const options = {
       articleId,
       title: title,
-      article: article,
+      article: article || '',
       description: description || '',
       tags: tags || [],
       cover: cover || '',
@@ -69,4 +68,47 @@ router.route('/v1/article').get(async (req, res, next) => {
   }
 })
 
+router.route('/v1/article/:articleId').put(async (req, res, next) => {
+  try {
+    const { articleId } = req.params
+    const { title, description, tags, cover, article } = req.body
+    if (!articleId) throw new ThrowError(ErrorCode.param, { message: '文章ID不能为空', status: 400 })
+    if (!title) throw new ThrowError(ErrorCode.param, { message: '文章标题不能为空', status: 400 })
+    const options = {
+      title: title,
+      article: article || '',
+      description: description || '',
+      tags: tags || [],
+      cover: cover || '',
+      updateTime: getServerTime()
+    }
+    if (options.tags.length) {
+      const orQuery = options.tags.map(item => {
+        return {
+          tagId: item
+        }
+      })
+      const dbTag = await tagModel.find({ $or: orQuery })
+      options.tags = dbTag.map(item => {
+        return {
+          id: item.tagId,
+          name: item.tagName
+        }
+      })
+    }
+    const newItem = await articleModel.findOneAndUpdate({ articleId }, options, { new: true }).exec()
+    resolveSuccessData(res, {
+      id: newItem.articleId,
+      title: newItem.title,
+      description: newItem.description,
+      tags: newItem.tags,
+      cover: newItem.cover,
+      article: newItem.article,
+      createTime: newItem.createTime,
+      updateTime: newItem.updateTime
+    })
+  } catch (error) {
+    next(error)
+  }
+})
 module.exports = router
