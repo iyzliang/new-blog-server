@@ -1,3 +1,4 @@
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 const express = require('express')
 const expressJwt = require('express-jwt')
 const bodyParser = require('body-parser')
@@ -8,7 +9,6 @@ const { secretOrPrivateKey, jwtUnlessPath } = require('./config')
 const { resolveErrorData, getServerTime, getIPAddress, accessLogStream } = require('./utils')
 const { common, blog } = require('./routers/index')
 const app = express()
-
 morgan.token('localDate',function getDate(req) {
   return getServerTime()
 })
@@ -46,6 +46,6 @@ app.use((error, req, res, next) => {
   }
 })
 
-app.listen(3001, () => {
-  console.log(`--> ${getServerTime()} http://${getIPAddress()}:3001`)
+app.listen(process.env.serverPort, () => {
+  console.log(`--> ${getServerTime()} http://${getIPAddress()}:${process.env.serverPort}`)
 })
