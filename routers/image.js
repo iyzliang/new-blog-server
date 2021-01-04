@@ -4,7 +4,7 @@ const path = require('path')
 const fs = require('fs').promises
 const { resolveSuccessData, getServerTime } = require('../utils')
 const { ThrowError, ErrorCode } = require('../utils/throwError')
-const { uploadPath, uploadUrl } = require('../config')
+const { uploadPath } = require('../config')
 const imageModel = require('../model/imageModel')
 const mongoID = require('mongodb').ObjectID
 const { isFinite } = require('lodash')
@@ -24,7 +24,7 @@ router.route('/v1/image').post(async (req, res, next) => {
       const newItem = await (new imageModel({
         imageName: newFileName,
         imagePath: fileItem.path,
-        imageUrl: `${uploadUrl}/${newFileName}${extname}`,
+        imageUrl: `/${newFileName}${extname}`,
         createTime: getServerTime()
       })).save()
       resolveSuccessData(res, { url: newItem.imageUrl })

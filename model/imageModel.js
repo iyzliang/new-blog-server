@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const db = require('./db')
 const { ThrowError, ErrorCode } = require('../utils/throwError.js')
 const { getServerTime } = require('../utils/index')
+const { uploadUrl } = require('../config')
 
 const ImagesScheam = new mongoose.Schema({
   imageName: { type: String, default: '' },
@@ -24,7 +25,7 @@ ImagesScheam.statics.get_pagination_image = async function (page, size, name) {
   const resList = dbData.map(item => {
     return {
       name: item.imageName,
-      url: item.imageUrl,
+      url: `${uploadUrl}${item.imageUrl}`,
       createTime: item.createTime
     }
   })
